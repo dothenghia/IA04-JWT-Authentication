@@ -9,7 +9,7 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     const { username, email, password, phone } = createUserDto;
 
     // Check if username already exists
@@ -39,11 +39,11 @@ export class UsersService {
     }
   }
 
-  async findOne(email: string): Promise<User | undefined> {
+  async findOne(email: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ email }).exec();
   }
 
-  async findById(id: string): Promise<User | undefined> {
+  async findById(id: string): Promise<UserDocument | null> {
     return this.userModel.findById(id).exec();
   }
 }

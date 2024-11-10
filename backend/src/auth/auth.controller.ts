@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { IUser } from '../users/interfaces/user.interface';
 
 @Controller('user')
 export class AuthController {
@@ -57,7 +58,7 @@ export class AuthController {
         message: 'User not found'
       };
     }
-    const { password, ...result } = user.toObject();
+    const { password, ...result } = (user as IUser).toObject();
     return {
       statusCode: HttpStatus.OK,
       message: 'Profile retrieved successfully',
