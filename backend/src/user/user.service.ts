@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './user.schema';
@@ -15,13 +15,21 @@ export class UserService {
     // Check if username already exists
     const existingUsername = await this.userModel.findOne({ username }).exec();
     if (existingUsername) {
-      throw new ConflictException('Username already exists');
+      throw new ConflictException({
+        message: [{ field: 'username', message: 'Username already exists' }],
+        error: 'Conflict',
+        statusCode: 409
+      });
     }
 
     // Check if email already exists
     const existingEmail = await this.userModel.findOne({ email }).exec();
     if (existingEmail) {
-      throw new ConflictException('Email already exists');
+      throw new ConflictException({
+        message: [{ field: 'email', message: 'Email already exists' }],
+        error: 'Conflict',
+        statusCode: 409
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -35,38 +43,24 @@ export class UserService {
     try {
       return await newUser.save();
     } catch (error) {
-      throw new BadRequestException('Invalid input data');
+      throw new BadRequestException({
+        message: [{ field: 'general', message: 'Invalid input data' }],
+        error: 'Bad Request',
+        statusCode: 400
+      });
     }
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
-  }
-
-  async findByEmail(email: string): Promise<UserDocument | null> {
-    return this.userModel.findOne({ email }).exec();
+  async findAll(): Promise<number> {
+    return this.userModel.countDocuments().exec();
   }
 
   async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.findByEmail(email);
+    const user = await this.userModel.findOne({ email }).exec();
     if (user && await bcrypt.compare(password, user.password)) {
       const { password, ...result } = user.toObject();
       return result;
     }
     return null;
-  }
-
-  async login(email: string, password: string) {
-    const user = await this.validateUser(email, password);
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-    return {
-      message: 'Login successful',
-      user: {
-        email: user.email,
-        username: user.username
-      }
-    };
   }
 }

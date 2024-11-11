@@ -1,16 +1,13 @@
-import { Controller, Post, Get, Body, HttpCode, HttpStatus, ValidationPipe, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Body, HttpCode, HttpStatus, ValidationPipe, UseGuards, Request, ConflictException, BadRequestException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterDto } from './register.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post('register')
-  @HttpCode(HttpStatus.CREATED)
   async register(@Body(new ValidationPipe({
     transform: true,
     whitelist: true,
@@ -19,15 +16,20 @@ export class UserController {
   })) registerDto: RegisterDto) {
     try {
       const user = await this.userService.register(registerDto);
-      return { message: `User registered successfully with email ${user.email}` };
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: `User registered successfully with email ${user.email}`
+      };
     } catch (error) {
-      if (error instanceof Error) {
-        return {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: 'Registration failed',
-          errors: [{ field: error.name, message: error.message }]
-        };
+      if (error instanceof ConflictException || error instanceof BadRequestException) {
+        throw error; // Re-throw the exception to let NestJS handle it
       }
+      // Handle any other unexpected errors
+      throw new BadRequestException({
+        message: [{ field: 'general', message: 'An unexpected error occurred' }],
+        error: 'Internal Server Error',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
     }
   }
 
@@ -40,12 +42,7 @@ export class UserController {
   @Get('all')
   @HttpCode(HttpStatus.OK)
   async getAllUsers() {
-    const users = await this.userService.findAll();
-    return users.map(user => ({
-      username: user.username,
-      email: user.email,
-      phone: user.phone,
-      createdAt: user.createdAt
-    }));
+    const count = await this.userService.findAll();
+    return { count };
   }
 }
