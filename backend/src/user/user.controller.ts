@@ -1,11 +1,13 @@
-import { Controller, Post, Get, Body, HttpCode, HttpStatus, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, Get, Body, HttpCode, HttpStatus, ValidationPipe, UseGuards, Request } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterDto } from './register.dto';
-import { LoginDto } from './login.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+  ) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
@@ -29,20 +31,13 @@ export class UserController {
     }
   }
 
-  @Post('login')
-  @HttpCode(HttpStatus.OK)
-  async login(@Body(ValidationPipe) loginDto: LoginDto) {
-    try {
-      return await this.userService.login(loginDto.email, loginDto.password);
-    } catch (error) {
-      return {
-        statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Login failed',
-        error: error.message,
-      };
-    }
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('all')
   @HttpCode(HttpStatus.OK)
   async getAllUsers() {
