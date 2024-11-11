@@ -6,6 +6,7 @@ import { LoginDto } from '../user/login.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  // /user/login
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body(ValidationPipe) loginDto: LoginDto) {

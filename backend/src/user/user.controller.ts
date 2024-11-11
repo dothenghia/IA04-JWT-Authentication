@@ -7,6 +7,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // /user/register
   @Post('register')
   async register(@Body(new ValidationPipe({
     transform: true,
@@ -33,6 +34,7 @@ export class UserController {
     }
   }
 
+  // /user/profile
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
@@ -52,6 +54,7 @@ export class UserController {
     }
   }
 
+  // /user/all (Just for testing)
   @Get('all')
   @HttpCode(HttpStatus.OK)
   async getAllUsers() {

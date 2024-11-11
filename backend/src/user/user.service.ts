@@ -9,6 +9,7 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
+  // Register a new user
   async register(registerDto: RegisterDto): Promise<User> {
     const { username, email, password, phone } = registerDto;
 
@@ -32,6 +33,7 @@ export class UserService {
       });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new this.userModel({
       username,
@@ -41,6 +43,7 @@ export class UserService {
     });
 
     try {
+      // Save user to database
       return await newUser.save();
     } catch (error) {
       throw new BadRequestException({
@@ -51,14 +54,17 @@ export class UserService {
     }
   }
 
+  // Get the total number of users in the database (Just for testing)
   async findAll(): Promise<number> {
     return this.userModel.countDocuments().exec();
   }
 
+  // Get the user by email
   async findByEmail(email: string): Promise<User> {
     return this.userModel.findOne({ email }).exec();
   }
 
+  // Validate the user
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userModel.findOne({ email }).exec();
     if (user && await bcrypt.compare(password, user.password)) {
@@ -68,6 +74,7 @@ export class UserService {
     return null;
   }
 
+  // Get the user profile
   async getUserProfile(email: string) {
     const user = await this.findByEmail(email);
     if (!user) {
