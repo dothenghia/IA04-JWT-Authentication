@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, ValidationPipe, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from '../user/login.dto';
 
@@ -11,10 +11,11 @@ export class AuthController {
   async login(@Body(ValidationPipe) loginDto: LoginDto) {
     const user = await this.authService.validateUser(loginDto.email, loginDto.password);
     if (!user) {
-      return {
+      throw new UnauthorizedException({
         statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Invalid credentials',
-      };
+        message: [{ field: 'general', message: 'Invalid credentials' }],
+        error: 'Unauthorized'
+      });
     }
     const result = await this.authService.login(user);
     return {
