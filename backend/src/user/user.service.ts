@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './user.schema';
@@ -55,6 +55,10 @@ export class UserService {
     return this.userModel.countDocuments().exec();
   }
 
+  async findByEmail(email: string): Promise<User> {
+    return this.userModel.findOne({ email }).exec();
+  }
+
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userModel.findOne({ email }).exec();
     if (user && await bcrypt.compare(password, user.password)) {
@@ -62,5 +66,17 @@ export class UserService {
       return result;
     }
     return null;
+  }
+
+  async getUserProfile(email: string) {
+    const user = await this.findByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    return {
+      username: user.username,
+      email: user.email,
+      phone: user.phone || null
+    };
   }
 }

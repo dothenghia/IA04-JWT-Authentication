@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, HttpCode, HttpStatus, ValidationPipe, UseGuards, Request, ConflictException, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Get, Body, HttpCode, HttpStatus, ValidationPipe, UseGuards, Request, ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterDto } from './register.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -35,8 +35,21 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  async getProfile(@Request() req) {
+    try {
+      const userProfile = await this.userService.getUserProfile(req.user.email);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Profile retrieved successfully',
+        user: userProfile
+      };
+    } catch (error) {
+      throw new UnauthorizedException({
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: [{ field: 'general', message: 'Unable to retrieve user profile' }],
+        error: 'Unauthorized'
+      });
+    }
   }
 
   @Get('all')
