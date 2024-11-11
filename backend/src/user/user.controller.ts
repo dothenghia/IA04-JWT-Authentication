@@ -37,7 +37,6 @@ export class UserController {
     return req.user;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('all')
   @HttpCode(HttpStatus.OK)
   async getAllUsers() {
