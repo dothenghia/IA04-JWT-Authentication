@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// const API_BASE_URL = 'https://thenghia-registration-backend.vercel.app';
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://thenghia-jwt-authentication-be.vercel.app';
+// const API_BASE_URL = 'http://localhost:3000';
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
