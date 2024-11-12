@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography, Card } from 'antd';
 import { useAuthStore } from '../stores/useAuthStore';
+import Cobe from '../components/Cobe';
 
 const { Title } = Typography;
 
@@ -18,6 +19,10 @@ const HomePage: React.FC = () => {
           This is a protected route that can only be accessed by authenticated users.
         </h1>
       </Card>
+
+      <div className="items-center justify-center md:h-auto bg-transparent relative w-full">
+        <Cobe/>
+    </div>
     </div>
   );
 };
