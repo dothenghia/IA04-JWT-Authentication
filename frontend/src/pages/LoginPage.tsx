@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login } from '../services';
-import axios from 'axios';
-import { ErrorMessage, LoginResponse } from '../services/type';
 import Loader from '../components/Loader';
 import { message } from 'antd';
+
+import axios from 'axios';
+import { ErrorMessage, LoginResponse } from '../services/type';
+import { login } from '../services';
 import { useAuthStore } from '../stores/useAuthStore';
 
 const LoginPage: React.FC = () => {
@@ -15,6 +16,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const loginUser = useAuthStore(state => state.login);
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -24,7 +26,8 @@ const LoginPage: React.FC = () => {
       loginUser(loginResponse);
       message.success('Login successful');
       navigate('/home');
-    } catch (err) {
+    }
+    catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         if (err.response.data && Array.isArray(err.response.data.message)) {
           setErrors(err.response.data.message);

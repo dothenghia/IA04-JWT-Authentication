@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Card, Descriptions, message, Spin } from 'antd';
-import { getProfile } from '../services';
-import { User } from '../services/type';
+import { Typography, Card, Descriptions, message } from 'antd';
 import Loader from '../components/Loader';
+
+import { User } from '../services/type';
+import { getProfile } from '../services';
 
 const { Title } = Typography;
 

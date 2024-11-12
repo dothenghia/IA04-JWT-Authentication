@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { register } from '../services';
-import axios from 'axios';
-import { ErrorMessage } from '../services/type';
 import Loader from '../components/Loader';
 import { message } from 'antd';
+
+import axios from 'axios';
+import { register } from '../services';
+import { ErrorMessage } from '../services/type';
 
 const SignupPage = () => {
   const [username, setUsername] = useState('');
@@ -27,7 +28,8 @@ const SignupPage = () => {
       await register(userData);
       message.success('Registration successful');
       navigate('/login');
-    } catch (err) {
+    }
+    catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         if (err.response.data && Array.isArray(err.response.data.message)) {
           setErrors(err.response.data.message);

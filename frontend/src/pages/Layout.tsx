@@ -12,11 +12,7 @@ const Layout: React.FC = () => {
   const user = useAuthStore(state => state.user);
   const logout = useAuthStore(state => state.logout);
 
-  const menuItems = [
-    { key: '/home', label: <Link to="/home">Home</Link> },
-    { key: '/profile', label: <Link to="/profile">Profile</Link> },
-  ];
-
+  // Handle logout
   const handleLogout = () => {
     logout();
     message.success('Logged out successfully');
@@ -37,11 +33,31 @@ const Layout: React.FC = () => {
 
   return (
     <AntLayout className="min-h-screen">
-      <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Menu theme="dark" mode="horizontal" selectedKeys={[location.pathname]} style={{ flex: 1 }} items={menuItems} />
-        <Space>
-          <Button onClick={handleLogout}>Logout</Button>
-        </Space>
+      <Header style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        height: '52px',
+        lineHeight: '52px',
+        padding: '0 20px'
+      }}>
+        <Menu
+          theme="dark"
+          mode="horizontal"
+          selectedKeys={[location.pathname]}
+          style={{ flex: 1, height: '52px', lineHeight: '52px' }}
+          items={[
+            {
+              key: '/home',
+              label: <Link to="/home">Home</Link>
+            },
+            {
+              key: '/profile',
+              label: <Link to="/profile">Profile</Link>
+            },
+          ]}
+        />
+        <Button onClick={handleLogout}>Logout</Button>
       </Header>
       <Content className="p-8">
         <Outlet />

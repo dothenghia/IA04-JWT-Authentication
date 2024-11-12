@@ -16,21 +16,25 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-export const getUsers = async () => {
-  const response = await axiosInstance.get('/user/all');
-  return response.data;
-};
+// Get all users (Just for testing)
+// export const getUsers = async () => {
+//   const response = await axiosInstance.get('/user/all');
+//   return response.data;
+// };
 
+// Register account
 export const register = async (userData: any) => {
   const response = await axiosInstance.post('/user/register', userData);
   return response.data;
 };
 
+// Login account
 export const login = async (credentials: any) => {
   const response = await axiosInstance.post('/user/login', credentials);
   return response.data;
 };
 
+// Get user profile
 export const getProfile = async () => {
   const response = await axiosInstance.get('/user/profile');
   return response.data;
