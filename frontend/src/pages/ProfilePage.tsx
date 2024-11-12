@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { Typography, Card, Descriptions, message, Spin } from 'antd';
 import { getProfile } from '../services';
+import { User } from '../services/type';
 import Loader from '../components/Loader';
-import { message } from 'antd';
-import { useAuthStore } from '../stores/useAuthStore';
+
+const { Title } = Typography;
 
 const ProfilePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const user = useAuthStore(state => state.user);
+  const [profileData, setProfileData] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        await getProfile(); // This is just to verify the token
+        const response = await getProfile();
+        setProfileData(response.user);
         setIsLoading(false);
       } catch (error) {
         message.error('Failed to fetch profile');
@@ -22,27 +25,25 @@ const ProfilePage: React.FC = () => {
     fetchProfile();
   }, []);
 
-  if (isLoading) return <Loader />;
+  if (isLoading) {
+    return <Loader />
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Profile</h2>
-        </div>
-        {user && (
-          <div className="mt-8 space-y-6">
-            <div className="rounded-md shadow-sm -space-y-px">
-              <div className="p-4 bg-white">
-                <p><strong>Username:</strong> {user.username}</p>
-                <p><strong>Email:</strong> {user.email}</p>
-                {user.phone && <p><strong>Phone:</strong> {user.phone}</p>}
-                <p><strong>Created At:</strong> {new Date(user.createdAt).toLocaleString()}</p>
-              </div>
-            </div>
-          </div>
+    <div className="max-w-4xl mx-auto">
+      <Title level={2}>User Profile</Title>
+      <Card>
+        {profileData && (
+          <Descriptions bordered>
+            <Descriptions.Item label="Username" span={3}>{profileData.username}</Descriptions.Item>
+            <Descriptions.Item label="Email" span={3}>{profileData.email}</Descriptions.Item>
+            <Descriptions.Item label="Phone" span={3}>{profileData.phone || '-'}</Descriptions.Item>
+            <Descriptions.Item label="Created At" span={3}>
+              {new Date(profileData.createdAt).toLocaleString()}
+            </Descriptions.Item>
+          </Descriptions>
         )}
-      </div>
+      </Card>
     </div>
   );
 };

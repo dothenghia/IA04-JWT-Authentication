@@ -1,85 +1,24 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getUsers } from '../services';
-import { User } from '../services/type';
-import Loader from '../components/Loader';
+import React from 'react';
+import { Typography, Card } from 'antd';
+import { useAuthStore } from '../stores/useAuthStore';
 
-const HomePage = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+const { Title, Paragraph } = Typography;
 
-  // Check if user is logged in
-  useEffect(() => {
-    const checkAuth = () => {
-      const user = localStorage.getItem('user');
-      if (!user) {
-        navigate('/login');
-      }
-    };
-
-    checkAuth();
-
-    const fetchUsers = async () => {
-      setIsLoading(true);
-      try {
-        const data = await getUsers();
-        setUsers(data);
-      } catch (error) {
-        console.error('Failed to fetch users:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, [navigate]);
-
-  // Logout user
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
+const HomePage: React.FC = () => {
+  const user = useAuthStore(state => state.user);
 
   return (
-    <>
-      {isLoading && <Loader />}
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Registered Users</h1>
-          <button
-            onClick={handleLogout}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full"
-          >
-            Logout
-          </button>
-        </div>
-
-        <div className="overflow-x-auto rounded-2xl">
-          <table className="min-w-full bg-white">
-            <thead className="bg-blue-500 text-white">
-              <tr>
-                <th className="py-2 px-4 border-b text-left">Username</th>
-                <th className="py-2 px-4 border-b text-left">Email</th>
-                <th className="py-2 px-4 border-b text-left">Phone</th>
-                <th className="py-2 px-4 border-b text-left">Created At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : ''}>
-                  <td className="py-2 px-4 border-b">{user.username}</td>
-                  <td className="py-2 px-4 border-b">{user.email}</td>
-                  <td className="py-2 px-4 border-b">{user.phone || 'N/A'}</td>
-                  <td className="py-2 px-4 border-b">{new Date(user.createdAt).toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-    </>
+    <div className="max-w-4xl mx-auto">
+      <Title level={2}>Welcome to the Home Page</Title>
+      <Card>
+        <Paragraph>
+          Hello, {user?.username}! You are successfully logged in.
+        </Paragraph>
+        <Paragraph>
+          This is a protected route that can only be accessed by authenticated users.
+        </Paragraph>
+      </Card>
+    </div>
   );
 };
 
