@@ -14,7 +14,7 @@ const HomePage: React.FC = () => {
         <h1>
           Hello, {user?.username}! You are successfully logged in.
         </h1>
-        <h1>
+        <h1 className='mt-2'>
           This is a protected route that can only be accessed by authenticated users.
         </h1>
       </Card>

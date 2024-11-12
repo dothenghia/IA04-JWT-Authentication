@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Button, Layout as AntLayout, Menu, Space } from 'antd';
+import { Button, Layout as AntLayout, Menu } from 'antd';
 import { message } from 'antd';
 import { useAuthStore } from '../stores/useAuthStore';
 

@@ -35,11 +35,11 @@ const ProfilePage: React.FC = () => {
       <Title level={2}>User Profile</Title>
       <Card>
         {profileData && (
-          <Descriptions bordered>
-            <Descriptions.Item label="Username" span={3}>{profileData.username}</Descriptions.Item>
-            <Descriptions.Item label="Email" span={3}>{profileData.email}</Descriptions.Item>
-            <Descriptions.Item label="Phone" span={3}>{profileData.phone || '-'}</Descriptions.Item>
-            <Descriptions.Item label="Created At" span={3}>
+          <Descriptions bordered column={1}>
+            <Descriptions.Item label="Username" style={{ fontSize: '1.1rem' }}>{profileData.username}</Descriptions.Item>
+            <Descriptions.Item label="Email" style={{ fontSize: '1.1rem' }}>{profileData.email}</Descriptions.Item>
+            <Descriptions.Item label="Phone" style={{ fontSize: '1.1rem' }}>{profileData.phone || '-'}</Descriptions.Item>
+            <Descriptions.Item label="Created At" style={{ fontSize: '1.1rem' }}>
               {new Date(profileData.createdAt).toLocaleString()}
             </Descriptions.Item>
           </Descriptions>
