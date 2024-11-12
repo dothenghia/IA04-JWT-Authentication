@@ -5,6 +5,7 @@ import axios from 'axios';
 import { ErrorMessage, LoginResponse } from '../services/type';
 import Loader from '../components/Loader';
 import { message } from 'antd';
+import { useAuthStore } from '../stores/useAuthStore';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +13,7 @@ const LoginPage: React.FC = () => {
   const [errors, setErrors] = useState<ErrorMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const loginUser = useAuthStore(state => state.login);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +21,7 @@ const LoginPage: React.FC = () => {
     try {
       const response = await login({ email, password });
       const loginResponse = response as LoginResponse;
-      localStorage.setItem('user', JSON.stringify(loginResponse));
+      loginUser(loginResponse);
       message.success('Login successful');
       navigate('/home');
     } catch (err) {

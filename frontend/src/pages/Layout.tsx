@@ -2,15 +2,16 @@ import React from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { Button, Layout as AntLayout, Menu } from 'antd';
 import { message } from 'antd';
+import { useAuthStore } from '../stores/useAuthStore';
 
 const { Header, Content } = AntLayout;
 
 const Layout: React.FC = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const { user, logout } = useAuthStore();
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    logout();
     message.success('Logged out successfully');
     navigate('/login');
   };
@@ -20,7 +21,7 @@ const Layout: React.FC = () => {
       <Header>
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
           <Menu.Item key="1"><Link to="/home">Home</Link></Menu.Item>
-          {user && user.access_token ? (
+          {user ? (
             <>
               <Menu.Item key="2"><Link to="/profile">Profile</Link></Menu.Item>
               <Menu.Item key="3"><Button onClick={handleLogout}>Logout</Button></Menu.Item>

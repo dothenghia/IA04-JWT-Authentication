@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { getProfile } from '../services';
-import { User } from '../services/type';
 import Loader from '../components/Loader';
 import { message } from 'antd';
+import { useAuthStore } from '../stores/useAuthStore';
 
 const ProfilePage: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const user = useAuthStore(state => state.user);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await getProfile();
-        setUser(response.user);
+        await getProfile(); // This is just to verify the token
+        setIsLoading(false);
       } catch (error) {
         message.error('Failed to fetch profile');
-      } finally {
         setIsLoading(false);
       }
     };
