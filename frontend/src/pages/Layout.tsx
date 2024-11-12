@@ -9,18 +9,19 @@ const { Header, Content } = AntLayout;
 const Layout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuthStore();
+  const user = useAuthStore(state => state.user);
+  const logout = useAuthStore(state => state.logout);
+
+  const menuItems = [
+    { key: '/home', label: <Link to="/home">Home</Link> },
+    { key: '/profile', label: <Link to="/profile">Profile</Link> },
+  ];
 
   const handleLogout = () => {
     logout();
     message.success('Logged out successfully');
     navigate('/login');
   };
-
-  // If the current route is login or register, only render the Outlet
-  if (location.pathname === '/login' || location.pathname === '/register') {
-    return <Outlet />;
-  }
 
   // If there's no user, redirect to login
   React.useEffect(() => {
@@ -29,13 +30,15 @@ const Layout: React.FC = () => {
     }
   }, [user]);
 
+  // If the current route is login or register, only render the Outlet
+  if (location.pathname === '/login' || location.pathname === '/register') {
+    return <Outlet />;
+  }
+
   return (
     <AntLayout className="min-h-screen">
       <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']} style={{ flex: 1 }}>
-          <Menu.Item key="1"><Link to="/home">Home</Link></Menu.Item>
-          <Menu.Item key="2"><Link to="/profile">Profile</Link></Menu.Item>
-        </Menu>
+        <Menu theme="dark" mode="horizontal" selectedKeys={[location.pathname]} style={{ flex: 1 }} items={menuItems} />
         <Space>
           <Button onClick={handleLogout}>Logout</Button>
         </Space>

@@ -15,20 +15,12 @@ const App: React.FC = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-        <Route index element={<LoginPage />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<SignupPage />} />
-          <Route path="home" element={
-            <PrivateRoute>
-              <HomePage />
-            </PrivateRoute>
-          } />
-          <Route path="profile" element={
-            <PrivateRoute>
-              <ProfilePage />
-            </PrivateRoute>
-          } />
-          <Route path="*" element={<Navigate to={user ? "/home" : "/login"} replace />} />
+          <Route index element={user ? <Navigate to="/home" replace /> : <LoginPage />} />
+          <Route path="login" element={user ? <Navigate to="/home" replace /> : <LoginPage />} />
+          <Route path="register" element={user ? <Navigate to="/home" replace /> : <SignupPage />} />
+          <Route path="home" element={<PrivateRoute><HomePage /></PrivateRoute>} />
+          <Route path="profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+          <Route path="*" element={<h1>Not Found</h1>} />
         </Route>
       </Routes>
     </BrowserRouter>

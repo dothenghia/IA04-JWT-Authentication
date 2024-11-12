@@ -83,7 +83,8 @@ export class UserService {
     return {
       username: user.username,
       email: user.email,
-      phone: user.phone || null
+      phone: user.phone || null,
+      createdAt: user.createdAt,
     };
   }
 }
