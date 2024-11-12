@@ -10,3 +10,8 @@ export interface User {
   phone?: string;
   createdAt: string;
 }
+
+export interface LoginResponse {
+  access_token: string;
+  user: User;
+}
